@@ -1,0 +1,200 @@
+model = models.densenet121(pretrained=True)
+n_epochs = 7 Frozen
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (762/817)
+Time Stage: 203.902 seconds
+n_epochs = 4 UnFrozen
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 508.960 seconds
+
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 91% (750/817)
+Time Stage: 188.076 seconds
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 465.306 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),                       
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 192.271 seconds
+Test Accuracy (Overall): 97% (799/817)
+Time Stage: 476.362 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 92% (753/817)
+Time Stage: 201.420 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 484.554 seconds
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+n_epochs = 14 Frozen / n_epochs = 8 UnFrozen
+----------------
+classifier = nn.Sequential(OrderedDict([                       
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 95% (779/817)
+Time Stage: 364.820 seconds
+Test Accuracy (Overall): 98% (805/817)
+Time Stage: 932.658 seconds
+-----------------------------------------------------------------
+n_epochs = 14 Frozen / n_epochs = 8 UnFrozen
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 360.609 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 906.115 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),                       
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (764/817)
+Time Stage: 374.952 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 935.871 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 94% (769/817)
+Time Stage: 378.048 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 967.095 seconds
+
+-------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+So here are some of the modles I have done and accuracy acheived. 
+would be cool if you wanted to add to the list 
+
+model = models.densenet121(pretrained=True)
+31mb
+optimizer = optim.Adam(model.parameters(), lr=0.00064, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=2, min_lr=0, eps=1e-08)
+Epoch: 119 	Training Loss: 0.230989 	Validation Loss: 0.163697
+Validation loss decreased (0.163869 --> 0.163697).  Saving model ...
+Time per epoch: 64.981 seconds
+Test Accuracy (Overall): 96% (787/817)
+Time Stage: 8066.614 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=2, min_lr=0, eps=1e-08)
+Epoch: 92 	Training Loss: 0.045344 	Validation Loss: 0.055541
+Validation loss decreased (0.058324 --> 0.055541).  Saving model ...
+Time per epoch: 112.395 seconds
+Test Accuracy (Overall): 98% (806/817)
+------------------------------------------------------------------------------------
+model = models.resnet152(pretrained=True)
+238mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 22 	Training Loss: 0.322030 	Validation Loss: 0.188022
+Validation loss decreased (0.194729 --> 0.188022).  Saving model ...
+Time per epoch: 75.524 seconds
+Test Accuracy (Overall): 93% (765/817)
+Time Stage: 1858.120 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.000081, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 4 	Training Loss: 0.265571 	Validation Loss: 0.106344
+Validation loss decreased (0.140558 --> 0.106344).  Saving model ...
+Time per epoch: 172.221 seconds
+Test Accuracy (Overall): 95% (784/817)
+Time Stage: 1059.570 seconds
+------------------------------------------------------------------------------------
+model = models.densenet161(pretrained=True)
+117mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 20 	Training Loss: 0.259760 	Validation Loss: 0.156516
+Validation loss decreased (0.182048 --> 0.156516).  Saving model ...
+Time per epoch: 78.069 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 1722.349 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.0, amsgrad=True)
+Epoch: 2 	Training Loss: 0.333429 	Validation Loss: 0.095033
+Validation loss decreased (0.166492 --> 0.095033).  Saving model ...
+Time per epoch: 182.796 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 755.178 seconds
+------------------------------------------------------------------------------------
+model = models.densenet121(pretrained=True)
+31mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 18 	Training Loss: 0.513436 	Validation Loss: 0.200934
+Validation loss decreased (0.226969 --> 0.200934).  Saving model ...
+Time per epoch: 69.384 seconds
+Test Accuracy (Overall): 93% (764/817)
+Time Stage: 1416.255 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.0004, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 11 	Training Loss: 0.252496 	Validation Loss: 0.131872
+Validation loss decreased (0.150561 --> 0.131872).  Saving model ...
+Time per epoch: 105.567 seconds
+Test Accuracy (Overall): 97% (795/817)
+Time Stage: 3566.325 seconds
+------------------------------------------------------------------------------------
+model = models.resnet50(pretrained=True)
+102mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 27 	Training Loss: 0.533656 	Validation Loss: 0.224950
+Validation loss decreased (0.232453 --> 0.224950).  Saving model ...
+Time per epoch: 65.186 seconds
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 1970.902 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.0004, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 18 	Training Loss: 0.269585 	Validation Loss: 0.145546
+Validation loss decreased (0.147108 --> 0.145546).  Saving model ...
+Time per epoch: 89.952 seconds
+Test Accuracy (Overall): 94% (773/817)
+Time Stage: 3740.576 seconds
+------------------------------------------------------------------------------------
+model = models.vgg16(pretrained=True)
+526mb
+optimizer = optim.SGD(model.classifier.parameters(), lr=0.001)
+n_epochs = 50
+Test Accuracy (Overall): 90% (736/817)
+for param in model.features.parameters():
+    param.requires_grad = True
+optimizer = optim.SGD(model.parameters(), lr=0.0005)
+Test Accuracy (Overall): 95% (781/817)

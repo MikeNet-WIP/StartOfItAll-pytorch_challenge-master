@@ -1,0 +1,872 @@
+
+
+model = models.densenet201(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 7
+n_epochs2 = 2
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+#random_seeding(64,train_on_gpu)
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 6 	Training Loss: 0.436156 	Validation Loss: 0.218760 	lr: 0.006 
+Validation loss decreased (0.227647 --> 0.218760).  Saving model ...
+Time per epoch: 40.504 seconds
+Test Accuracy (Overall): 93% (766/816)
+Time Stage: 299.815 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 1 	Training Loss: 0.323190 	Validation Loss: 0.119284 	lr: 8e-05 
+Validation loss decreased (inf --> 0.119284).  Saving model ...
+Time per epoch: 136.325 seconds
+Test Accuracy (Overall): 95% (779/816)
+Time Stage: 585.079 seconds
+-----------------------------------------------------
+model = models.densenet201(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 7
+n_epochs2 = 2
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+random_seeding(64,train_on_gpu)
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('dr', nn.Dropout(0.35)), 
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 6 	Training Loss: 1.842137 	Validation Loss: 0.272417 	lr: 0.006 
+Validation loss decreased (0.305788 --> 0.272417).  Saving model ...
+Time per epoch: 42.086 seconds
+Test Accuracy (Overall): 92% (753/816)
+Time Stage: 315.702 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 1.609183 	Validation Loss: 0.139467 	lr: 8e-05 
+Validation loss decreased (0.188314 --> 0.139467).  Saving model ...
+Time per epoch: 140.900 seconds
+Time Stage: 601.946 seconds
+Test Accuracy (Overall): 94% (775/816)
+Time Stage: 609.949 seconds
+-----------------------------------------------------
+model = models.densenet201(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 7
+n_epochs2 = 2
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+random_seeding(64,train_on_gpu)
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 6 	Training Loss: 0.414549 	Validation Loss: 0.195587 	lr: 0.006 
+Validation loss decreased (0.228192 --> 0.195587).  Saving model ...
+Time per epoch: 41.474 seconds
+Test Accuracy (Overall): 92% (757/816)
+Time Stage: 306.753 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 1 	Training Loss: 0.338282 	Validation Loss: 0.137322 	lr: 8e-05 
+Validation loss decreased (inf --> 0.137322).  Saving model ...
+Time per epoch: 141.117 seconds
+Test Accuracy (Overall): 95% (781/816)
+Time Stage: 606.369 seconds
+-----------------------------------------------------
+model = models.densenet201(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 30
+n_epochs2 = 8
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 28 	Training Loss: 0.234690 	Validation Loss: 0.115142 	lr: 0.0006000000000000001 
+Validation loss decreased (0.123233 --> 0.115142).  Saving model ...
+Time per epoch: 41.467 seconds 
+Test Accuracy (Overall): 96% (788/816)
+Time Stage: 1257.428 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 5 	Training Loss: 0.199062 	Validation Loss: 0.068426 	lr: 8e-05 
+Validation loss decreased (0.086167 --> 0.068426).  Saving model ...
+Time per epoch: 140.838 seconds 
+Test Accuracy (Overall): 97% (794/816)
+Time Stage: 2405.463 seconds
+-----------------------------------------------------
+model = models.densenet201(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 5
+n_epochs2 = 2
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 0.601326 	Validation Loss: 0.209188 	lr: 0.006 
+Validation loss decreased (0.348988 --> 0.209188).  Saving model ...
+Time per epoch: 41.522 seconds
+Test Accuracy (Overall): 92% (754/816)
+Time Stage: 224.880 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 0.284450 	Validation Loss: 0.092835 	lr: 8e-05 
+Validation loss decreased (0.121062 --> 0.092835).  Saving model ...
+Time per epoch: 139.027 seconds
+Test Accuracy (Overall): 96% (789/816)
+Time Stage: 519.753 seconds
+-----------------------------------------------------
+model = models.densenet201(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 5
+n_epochs2 = 2
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('dr', nn.Dropout(0.35)), 
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 4 	Training Loss: 1.867146 	Validation Loss: 0.285517 	lr: 0.006 
+Validation loss decreased (0.349918 --> 0.285517).  Saving model ...
+Time per epoch: 41.226 seconds
+Test Accuracy (Overall): 91% (743/816)
+Time Stage: 224.112 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 1.695599 	Validation Loss: 0.139963 	lr: 8e-05 
+Validation loss decreased (0.174672 --> 0.139963).  Saving model ...
+Time per epoch: 144.478 seconds
+Test Accuracy (Overall): 95% (781/816)
+Time Stage: 524.404 seconds
+-----------------------------------------------------
+model = models.resnet152(pretrained=True)
+batch_size = 18 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 30
+n_epochs2 = 7
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 28 	Training Loss: 0.279323 	Validation Loss: 0.153802 	lr: 0.0006000000000000001 
+Validation loss decreased (0.156805 --> 0.153802).  Saving model ...
+Time per epoch: 40.335 seconds
+Test Accuracy (Overall): 94% (771/816)
+Time Stage: 1238.234 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 7 	Training Loss: 0.206673 	Validation Loss: 0.060159 	lr: 8e-05 
+Validation loss decreased (0.093289 --> 0.060159).  Saving model ...
+Time per epoch: 128.952 seconds
+Test Accuracy (Overall): 96% (788/816)
+Time Stage: 2210.151 seconds
+-----------------------------------------------------
+model = models.resnet18(pretrained=True)
+batch_size = 120 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 80
+n_epochs2 = 22
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 42 	Training Loss: 0.294459 	Validation Loss: 0.218383 	lr: 6.000000000000002e-07 
+Validation loss decreased (0.218900 --> 0.218383).  Saving model ...
+Time per epoch: 22.485 seconds
+Test Accuracy (Overall): 91% (750/816)
+Time Stage: 1812.036 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 21 	Training Loss: 0.088831 	Validation Loss: 0.094085 	lr: 8.000000000000001e-06 
+Validation loss decreased (0.096872 --> 0.094085).  Saving model ...
+Time per epoch: 24.497 seconds 
+Test Accuracy (Overall): 96% (788/816)
+Time Stage: 2366.349 seconds
+-----------------------------------------------------
+model = models.resnet18(pretrained=True)
+batch_size = 120 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16#8
+n_epochs1 = 80
+n_epochs2 = 22
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('bn', nn.BatchNorm1d(n_inputs, eps=1e-05, momentum=0.1, 
+                                                affine=True, track_running_stats=True)),
+                          ('relu1', nn.ReLU(inplace=True)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 42 	Training Loss: 0.294459 	Validation Loss: 0.218383 	lr: 6.000000000000002e-07 
+Validation loss decreased (0.218900 --> 0.218383).  Saving model ...
+Time per epoch: 22.485 seconds
+Test Accuracy (Overall): 91% (750/816)
+Time Stage: 1812.036 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 21 	Training Loss: 0.088831 	Validation Loss: 0.094085 	lr: 8.000000000000001e-06 
+Validation loss decreased (0.096872 --> 0.094085).  Saving model ...
+Time per epoch: 24.497 seconds 
+Test Accuracy (Overall): 96% (788/816)
+Time Stage: 2366.349 seconds
+-----------------------------------------------------
+model = models.densenet161(pretrained=True)
+batch_size = 14 #130 #30 #18
+num_workers= 8
+imagestoshow = 8#20#16
+n_epochs1 = 60
+n_epochs2 = 6
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 60 	Training Loss: 1.002601 	Validation Loss: 0.236824 	lr: 6.000000000000001e-05 
+Validation loss decreased (0.248660 --> 0.236824).  Saving model ...
+Time per epoch: 44.130 seconds
+Test Accuracy (Overall): 96% (788/817)
+Time Stage: 2652.340 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 6 	Training Loss: 0.449694 	Validation Loss: 0.114276 	lr: 8e-05 
+Validation loss decreased (0.117061 --> 0.114276).  Saving model ...
+Time per epoch: 156.652 seconds      
+Test Accuracy (Overall): 98% (802/817)
+Time Stage:xxxxxxx seconds  
+-----------------------------------------------------
+model = xception(True)
+batch_size = 14 #130 #30 #18
+num_workers= 8
+imagestoshow = 8#20#16
+n_epochs1 = 80
+n_epochs2 = 14
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          #('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 45 	Training Loss: 0.359510 	Validation Loss: 0.222759 	lr: 6.000000000000002e-08 
+Validation loss decreased (0.229229 --> 0.222759).  Saving model ...
+Time per epoch: 36.022 seconds
+Test Accuracy (Overall): 91% (748/817)
+Time Stage: 2890.295 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 10 	Training Loss: 0.117284 	Validation Loss: 0.049136 	lr: 8e-05 
+Validation loss decreased (0.064355 --> 0.049136).  Saving model ...
+Time per epoch: 104.355 seconds    
+Test Accuracy (Overall): 97% (800/817)
+Time Stage: 4370.550 seconds
+-----------------------------------------------------
+model = xception(True)
+batch_size = 14 #130 #30 #18
+num_workers= 8
+imagestoshow = 8#20#16
+n_epochs1 = 24
+n_epochs2 = 8
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 23 	Training Loss: 0.660136 	Validation Loss: 0.235369 	lr: 0.0006000000000000001 
+Validation loss decreased (0.255474 --> 0.235369).  Saving model ...
+Time per epoch: 34.854 seconds
+Test Accuracy (Overall): 89% (735/817)
+Time Stage: 862.791 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 6    Training Loss: 0.180794     Validation Loss: 0.056587   lr: 8e-05 
+Validation loss decreased (0.073662 --> 0.056587).  Saving model ...
+Time per epoch: 102.452 seconds     
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 1685.813 seconds
+-----------------------------------------------------
+model = xception(True)
+batch_size = 14 #130 #30 #18
+num_workers= 8
+imagestoshow = 8#20#16
+n_epochs1 = 3
+n_epochs2 = 2
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 1.415352 	Validation Loss: 0.594420 	lr: 0.006 
+Validation loss decreased (0.854384 --> 0.594420).  Saving model ...
+Time per epoch: 35.398 seconds
+Test Accuracy (Overall): 79% (648/817)
+Time Stage: 121.189 seconds
+optimizer = optim.Adam(model.parameters(), lr=lr2max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.0008, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 0.354963 	Validation Loss: 0.118197 	lr: 8e-05 
+Validation loss decreased (0.195310 --> 0.118197).  Saving model ...
+Time per epoch: 100.436 seconds      
+Test Accuracy (Overall): 95% (778/817)
+Time Stage: 334.335 seconds  
+-----------------------------------------------------
+model = models.densenet161(pretrained=True)
+batch_size = 14 #130 #30 #18
+num_workers= 8
+imagestoshow = 8#20#16
+lr1min = 1e-08
+lr1max = .006
+lr2min = 1e-08
+lr2max = 0.00008
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+
+optimizer = optim.Adam(model.classifier.parameters(), lr=lr1max, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=4, 
+                                                 verbose=False, threshold=0.006, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Time per epoch: 41.179 seconds
+Epoch: 3 	Training Loss: 1.984838 	Validation Loss: 0.713096 	lr: 0.006 
+Time per epoch: 41.136 seconds
+Test Accuracy (Overall): 87% (715/817)
+Time Stage: 139.412 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=6, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 2 	Training Loss: 0.557644 	Validation Loss: 0.145122 	lr: 8e-05 
+Validation loss decreased (0.173778 --> 0.145122).  Saving model ...
+Time per epoch: 149.229 seconds       
+Test Accuracy (Overall): 97% (795/817)
+Time Stage: 448.822 seconds       
+-----------------------------------------------------
+model = models.densenet121(pretrained=True)
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=0.006, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=6, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 40 	Training Loss: 0.926900 	Validation Loss: 0.156281 	lr: 0.0006000000000000001 
+Validation loss decreased (0.157711 --> 0.156281).  Saving model ...
+Time per epoch: 24.569 seconds
+Test Accuracy (Overall): 94% (776/817)
+Time Stage: 1004.372 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=6, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 38 	Training Loss: 0.144311 	Validation Loss: 0.031873 	lr: 8.000000000000001e-06 
+Validation loss decreased (0.037426 --> 0.031873).  Saving model ...
+Time per epoch: 66.876 seconds          
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 4912.027 seconds                
+-----------------------------------------------------
+model = models.resnet18(pretrained=True)
+batch_size = 150 #130 #30 #18
+num_workers= 8
+imagestoshow = 16#20#16
+classifier = nn.Sequential(OrderedDict([
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=0.006, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+Time Stage Start: 2.284 seconds
+Epoch: 1 	Training Loss: 2.628581 	Validation Loss: 0.836933 	lr: 0.006 
+Validation loss decreased (inf --> 0.836933).  Saving model ...
+Time per epoch: 22.602 seconds
+Epoch: 2 	Training Loss: 0.953608 	Validation Loss: 0.486908 	lr: 0.006 
+Validation loss decreased (0.836933 --> 0.486908).  Saving model ...
+Time per epoch: 22.803 seconds
+Time Stage: 47.692 seconds
+Test Accuracy (Overall): 86% (703/817)
+Time Stage: 53.591 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+Time Stage Start: 53.705 seconds
+Epoch: 1 	Training Loss: 0.501820 	Validation Loss: 0.227000 	lr: 8e-05 
+Validation loss decreased (inf --> 0.227000).  Saving model ...
+Time per epoch: 23.426 seconds
+Time Stage: 77.135 seconds
+Test Accuracy (Overall): 94% (771/817)
+Time Stage: 83.051 seconds
+-----------------------------------------------------
+model = models.resnet18(pretrained=True)
+batch_size = 130 #30
+num_workers= 8
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=0.006, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=6, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 55 	Training Loss: 0.643617 	Validation Loss: 0.185226 	lr: 6.000000000000001e-05 
+Validation loss decreased (0.187773 --> 0.185226).  Saving model ...
+Time per epoch: 23.829 seconds
+Test Accuracy (Overall): 92% (755/817)
+Time Stage: 1384.957 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.10, patience=6, 
+                                                 verbose=False, threshold=0.0001, threshold_mode='rel', 
+                                                 cooldown=0, min_lr=0, eps=1e-08)
+Epoch: 30 	Training Loss: 0.127580 	Validation Loss: 0.057780 	lr: 8e-05 
+Validation loss decreased (0.058592 --> 0.057780).  Saving model ...
+Time per epoch: 24.646 seconds
+Test Accuracy (Overall): 98% (803/817)
+-----------------------------------------------------
+model = models.resnet34(pretrained=True)
+batch_size = 130 #30
+num_workers= 8
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=0.006, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+                                           
+Epoch: 10 	Training Loss: 0.920912 	Validation Loss: 0.295067
+Validation loss decreased (0.345649 --> 0.295067).  Saving model ...
+Time per epoch: 23.024 seconds
+Test Accuracy (Overall): 90% (742/817)
+Time Stage: 482.061 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+
+Epoch: 38 	Training Loss: 0.101416 	Validation Loss: 0.069270
+Validation loss decreased (0.069333 --> 0.069270).  Saving model ...
+Time per epoch: 31.613 seconds
+Test Accuracy (Overall): 98% (804/817)
+Time Stage: 1767.087 seconds
+-----------------------------------------------------
+model = models.resnet18(pretrained=True)
+batch_size = 130 #30
+num_workers= 8
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)), 
+                          ('fc2', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+optimizer = optim.Adam(model.parameters(), lr=0.006, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+                                            
+Epoch: 12 	Training Loss: 0.916127 	Validation Loss: 0.312832
+Validation loss decreased (0.316308 --> 0.312832).  Saving model ...
+Time per epoch: 20.916 seconds
+Test Accuracy (Overall): 89% (733/817)
+Time Stage: 442.141 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+
+Epoch: 34 	Training Loss: 0.114995 	Validation Loss: 0.085850
+Validation loss decreased (0.091391 --> 0.085850).  Saving model ...
+Time per epoch: 24.151 seconds
+Test Accuracy (Overall): 98% (803/817)
+Time Stage: 1400.739 seconds
+-----------------------------------------------------
+model = models.resnet18(pretrained=True)
+batch_size = 130 #30
+num_workers= 8
+optimizer = optim.Adam(model.parameters(), lr=0.006, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+                                           
+Epoch: 11 	Training Loss: 0.462817 	Validation Loss: 0.276244
+Validation loss decreased (0.316028 --> 0.276244).  Saving model ...
+Time per epoch: 22.778 seconds
+Test Accuracy (Overall): 90% (737/817)
+Time Stage: 291.409 seconds
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-04, amsgrad=True)
+
+Epoch: 11 	Training Loss: 0.115687 	Validation Loss: 0.118638
+Validation loss decreased (0.124972 --> 0.118638).  Saving model ...
+Time per epoch: 24.627 seconds
+Test Accuracy (Overall): 96% (788/817)
+Time Stage: 599.534 seconds
+-----------------------------------------------------
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+model = models.densenet121(pretrained=True) block till END block
+----------------------------
+n_epochs = 7 Frozen
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (762/817)
+Time Stage: 203.902 seconds
+n_epochs = 4 UnFrozen
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 508.960 seconds
+
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 91% (750/817)
+Time Stage: 188.076 seconds
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 465.306 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),                       
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 192.271 seconds
+Test Accuracy (Overall): 97% (799/817)
+Time Stage: 476.362 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 92% (753/817)
+Time Stage: 201.420 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 484.554 seconds
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+n_epochs = 14 Frozen / n_epochs = 8 UnFrozen
+----------------
+classifier = nn.Sequential(OrderedDict([                       
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 95% (779/817)
+Time Stage: 364.820 seconds
+Test Accuracy (Overall): 98% (805/817)
+Time Stage: 932.658 seconds
+-----------------------------------------------------------------
+n_epochs = 14 Frozen / n_epochs = 8 UnFrozen
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 360.609 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 906.115 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),                       
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (764/817)
+Time Stage: 374.952 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 935.871 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 94% (769/817)
+Time Stage: 378.048 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 967.095 seconds
+----------------------------------------------------------------------+
+-----------------------------------------------------------------------
+END = models.densenet121(pretrained=True) block
+----------------------------
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+model = models.densenet121(pretrained=True)
+31mb
+optimizer = optim.Adam(model.parameters(), lr=0.00064, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+
+Epoch: 119 	Training Loss: 0.230989 	Validation Loss: 0.163697
+Validation loss decreased (0.163869 --> 0.163697).  Saving model ...
+Time per epoch: 64.981 seconds
+Test Accuracy (Overall): 96% (787/817)
+Time Stage: 8066.614 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.00008, betas=(0.9, 0.999), eps=1e-08, 
+                       weight_decay=1e-06, amsgrad=True)
+
+Epoch: 92 	Training Loss: 0.045344 	Validation Loss: 0.055541
+Validation loss decreased (0.058324 --> 0.055541).  Saving model ...
+Time per epoch: 112.395 seconds
+Test Accuracy (Overall): 98% (806/817)
+------------------------------------------------------------------------------------
+model = models.resnet152(pretrained=True)
+238mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 22 	Training Loss: 0.322030 	Validation Loss: 0.188022
+Validation loss decreased (0.194729 --> 0.188022).  Saving model ...
+Time per epoch: 75.524 seconds
+Test Accuracy (Overall): 93% (765/817)
+Time Stage: 1858.120 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.000081, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 4 	Training Loss: 0.265571 	Validation Loss: 0.106344
+Validation loss decreased (0.140558 --> 0.106344).  Saving model ...
+Time per epoch: 172.221 seconds
+Test Accuracy (Overall): 95% (784/817)
+Time Stage: 1059.570 seconds
+------------------------------------------------------------------------------------
+model = models.densenet161(pretrained=True)
+117mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 20 	Training Loss: 0.259760 	Validation Loss: 0.156516
+Validation loss decreased (0.182048 --> 0.156516).  Saving model ...
+Time per epoch: 78.069 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 1722.349 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.0001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0.0, amsgrad=True)
+Epoch: 2 	Training Loss: 0.333429 	Validation Loss: 0.095033
+Validation loss decreased (0.166492 --> 0.095033).  Saving model ...
+Time per epoch: 182.796 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 755.178 seconds
+------------------------------------------------------------------------------------
+model = models.densenet121(pretrained=True)
+31mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 18 	Training Loss: 0.513436 	Validation Loss: 0.200934
+Validation loss decreased (0.226969 --> 0.200934).  Saving model ...
+Time per epoch: 69.384 seconds
+Test Accuracy (Overall): 93% (764/817)
+Time Stage: 1416.255 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.0004, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 11 	Training Loss: 0.252496 	Validation Loss: 0.131872
+Validation loss decreased (0.150561 --> 0.131872).  Saving model ...
+Time per epoch: 105.567 seconds
+Test Accuracy (Overall): 97% (795/817)
+Time Stage: 3566.325 seconds
+------------------------------------------------------------------------------------
+model = models.resnet50(pretrained=True)
+102mb
+optimizer = optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 27 	Training Loss: 0.533656 	Validation Loss: 0.224950
+Validation loss decreased (0.232453 --> 0.224950).  Saving model ...
+Time per epoch: 65.186 seconds
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 1970.902 seconds
+for param in model.parameters():
+    param.requires_grad = True
+optimizer = optim.Adam(model.parameters(), lr=0.0004, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=True)
+Epoch: 18 	Training Loss: 0.269585 	Validation Loss: 0.145546
+Validation loss decreased (0.147108 --> 0.145546).  Saving model ...
+Time per epoch: 89.952 seconds
+Test Accuracy (Overall): 94% (773/817)
+Time Stage: 3740.576 seconds
+------------------------------------------------------------------------------------
+model = models.vgg16(pretrained=True)
+526mb
+optimizer = optim.SGD(model.classifier.parameters(), lr=0.001)
+n_epochs = 50
+Test Accuracy (Overall): 90% (736/817)
+for param in model.features.parameters():
+    param.requires_grad = True
+optimizer = optim.SGD(model.parameters(), lr=0.0005)
+Test Accuracy (Overall): 95% (781/817)

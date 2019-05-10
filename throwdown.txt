@@ -1,0 +1,91 @@
+model = models.densenet121(pretrained=True)
+n_epochs = 7 Frozen
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (762/817)
+Time Stage: 203.902 seconds
+n_epochs = 4 UnFrozen
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 508.960 seconds
+
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 91% (750/817)
+Time Stage: 188.076 seconds
+Test Accuracy (Overall): 98% (806/817)
+Time Stage: 465.306 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),                       
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 192.271 seconds
+Test Accuracy (Overall): 97% (799/817)
+Time Stage: 476.362 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 92% (753/817)
+Time Stage: 201.420 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 484.554 seconds
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+n_epochs = 14 Frozen / n_epochs = 8 UnFrozen
+----------------
+classifier = nn.Sequential(OrderedDict([                       
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 95% (779/817)
+Time Stage: 364.820 seconds
+Test Accuracy (Overall): 98% (805/817)
+Time Stage: 932.658 seconds
+-----------------------------------------------------------------
+n_epochs = 14 Frozen / n_epochs = 8 UnFrozen
+classifier = nn.Sequential(OrderedDict([
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc1', nn.Linear(n_inputs, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (766/817)
+Time Stage: 360.609 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 906.115 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),                       
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 93% (764/817)
+Time Stage: 374.952 seconds
+Test Accuracy (Overall): 97% (797/817)
+Time Stage: 935.871 seconds
+-----------------------------------------------------------------
+classifier = nn.Sequential(OrderedDict([
+                          ('fc1', nn.Linear(n_inputs, 850)),
+                          ('relu', nn.ReLU()),
+                          ('dr', nn.Dropout(0.35)),                        
+                          ('fc2', nn.Linear(850, len(cat_to_name))),
+                          ('output', nn.LogSoftmax(dim=1))
+                          ]))
+Test Accuracy (Overall): 94% (769/817)
+Time Stage: 378.048 seconds
+Test Accuracy (Overall): 98% (802/817)
+Time Stage: 967.095 seconds

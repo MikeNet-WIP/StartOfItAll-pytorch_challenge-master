@@ -1,0 +1,1439 @@
+
+Tyler Yang 1 day ago
+With DenseNet169, Adam optimizer, and 1Cycle Policy, I managed to achieve 99.3% validation accuracy... I'm very satisfied!
+Akash Singh 1 day ago
+wow!:awesome: (edited)
+Adam44 1 day ago
+congrats!
+what do you mean by 1Cycle Policy?
+vivek kothari 1 day ago
+congrats @Tyler Yang  :clap_hands:
+Tyler Yang 1 day ago
+@Adam44 It's a learning rate + momentum policy.
+https://sgugger.github.io/the-1cycle-policy.html
+Another data science student's blog
+The 1cycle policy
+Properly setting the hyper-parameters of a neural network can be challenging, fortunately, there are some recipe that can help. (993 kB)
+Apr 7th, 2018 at 1:23 PM
+Adam44 1 day ago
+thanks @Tyler Yang !
+im gonna look into it
+risper bevalyn 1 day ago
+AWSOME:blush: (edited)
+Kundan 1 day ago
+Congratulations @Tyler Yang
+Mrinmoy 1 day ago
+Congratulations @Tyler Yang
+sushil_facebook 1 day ago
+Great work @Tyler Yang! It's a great time to help others achieve the deadline. Keep up the good work.
+Jonathan Hasan 1 day ago
+@Tyler Yang Woot Woot!
+Jonathan Hasan 1 day ago
+@Tyler Yang Looks like I have got some catching up to do. This is an awesome result!
+Ayanlola 1 day ago
+wow thats cool
+Akhil_Tiwari 1 day ago
+Great @Tyler Yang, it'll also help others to improve their models.:clap_hands:
+Michael 1 day ago
+how many epochs?
+Rouzbeh.Afrasiabi 1 day ago
+@Tyler Yang nice!!! Just be careful not to overfit the model to the validation set :blush:
+Chris Kalle 1 day ago
+Nice work @Tyler Yang! I managed to get 121 layer DenseNet to achieve 98.3% validation acc.
+Marcos Vinicius Guimaraes 1 day ago
+Wow!! Great!!
+Sian 1 day ago
+^^ I've never seen so many variations of the party parrot reactions to a post before :joy:
+Lucian 1 day ago
+Congrats @Tyler Yang, how many epochs did it take? (edited)
+Adam44 1 day ago
+hey @Sian check this out!
+here is the whole gang and much more :wink:
+https://pytorchfbchallenge.slack.com/archives/CD9RG5G2U/p1546636978594000 (edited)
+Sian 1 day ago
+@Adam44 I didn't realise there was so many party parrots!
+Adam44 1 day ago
+me neither.
+this was just the tip of the iceberg
+Naveen 1 day ago
+Densenet161, Adam, StepLR gave me 99.28%. :grin:
+Tyler Yang 1 day ago
+@Michael It was trained for 150 epochs in total, and I got the best one from the 141st epoch. It's a lot, but I think it was a bit unnecessary :sweat_smile: (edited)
+Tyler Yang 1 day ago
+Here's the plot of the training&validation loss&accuracy!
+Jonathan Hasan 1 day ago
+@Tyler Yang How did you keep track of your losses for graphing?
+Michael 1 day ago
+@Tyler Yang Know the feeling trained densenet121 for 220 epochs..... we are unnecessary haha.
+that is a really flat lined graph..... wonder what it would look like log-log style
+Tyler Yang 1 day ago
+@Jonathan Hasan I made a dictionary that contained past epochs, and running losses&accuracy for both training and validation every epoch!
+Jonathan Hasan 1 day ago
+@Tyler Yang Would appending values to a list also work?
+Michael 1 day ago
+Thats what I do for my graphs
+   train_losses.append(train_loss)
+   valid_losses.append(valid_loss)def plotda_training(train_losses, valid_losses):
+   plt.subplot(1, 2, 1)
+   plt.plot(train_losses, label='Training loss')
+   plt.plot(valid_losses, label='Validation loss')
+   plt.xlabel('epochs')
+   plt.legend(frameon=False)
+   plt.title('Loss progress')
+   plt.show()
+   plt.savefig('progress.png')
+Tyler Yang 1 day ago
+@Jonathan Hasan In fact, that's exactly what I did! The dictionary I made was initialized like this: history = {"epoch": [], "loss": {"train": [], "valid" []}, "acc": {"train": [], "valid" []}}At the end of every epoch, I appended each calculated values to the corresponding list inside this dictionary.At the end of training, including when I raise KeyboardInterrupt error, the history dictionary and the state dictionary of the best model is returned.I even made the plot dynamic, so I could see the change every epoch! (edited)
+Jonathan Hasan 1 day ago
+@Michael So after your model finishes training x amount of epochs you will have values for train and valid losses from all those epochs. The lists are then passed to the plot function in a subsequent cell. That right?
+Michael 1 day ago
+@Tyler Yang ok now a dynamic plot is cool..... anyway to get the function for that?
+Michael 1 day ago
+@Jonathan Hasan that is correct
+Jonathan Hasan 1 day ago
+@Tyler Yang Dynamic plot does sound cool.
+Tyler Yang 1 day ago
+@Michael Well, it was a little bit of hassle... You can take a look at my training code here:
+
+def train(model, optimizer, criterion, n_epochs, device, train_loader, valid_loader, lr_schedule=None,
+
+          prehistory=None, checkpoint_file_path=None, checkpoint_note=""):
+
+    if not isinstance(optimizer, optim.Optimizer):
+
+        raise TypeError('expected an optimizer for `optimizer`, but {} was given'.format(type(optimizer)))
+
+    if not isinstance(n_epochs, int):
+
+        raise TypeError('expected an int for `n_epochs`, but {} was given'.format(type(n_epochs)))
+
+    if lr_schedule:
+
+        if not isinstance(lr_schedule, lr_scheduler._LRScheduler):
+
+            raise TypeError('expected a _LRScheduler for `lr_schedule`, but {} was given'.format(type(lr_schedule)))
+
+    
+
+    if prehistory:
+
+        history = prehistory
+
+        best_valid_loss = min(history['loss']['valid'])
+
+        train_loss = history['loss']['train'][-1]
+
+        train_acc = history['acc']['train'][-1]
+
+        valid_loss = history['loss']['valid'][-1]
+
+        valid_acc = history['acc']['valid'][-1]
+
+        i_epoch = history['epoch'][-1] + 1
+
+    else:
+
+        history = {'epoch':[], 'loss': {'train':[], 'valid':[]}, 'acc': {'train':[], 'valid':[]}}
+
+        best_valid_loss = np.inf
+
+        train_loss = np.inf
+
+        train_acc = 0.
+
+        valid_loss = np.inf
+
+        valid_acc = 0.
+
+        i_epoch = 0
+
+    
+
+    def update_progress_stats(update_epoch, update_train, update_valid):
+
+        if update_epoch:
+
+            if 'momentum' in optimizer.param_groups[0]:
+
+                momentum = optimizer.param_groups[0]['momentum']
+
+            elif 'betas' in optimizer.param_groups[0]:
+
+                momentum = optimizer.param_groups[0]['betas'][0]
+
+            else:
+
+                momentum = None
+
+            if len(best_dict['history']['epoch']) > 0:
+
+                epoch_iterator.set_postfix_str("current_epoch={}, "
+
+                                               "train(loss={:.4f}, acc={:.3f}), "
+
+                                               "valid(loss={:.4f}, acc={:.3f}), "
+
+                                               "best_valid(epoch={}, loss={:.4f}, acc={:.3f}), "
+
+                                               "lr={:.4e}, momentum={:.4f}"
+
+                                               .format(history['epoch'][-1] + 1,
+
+                                                       train_loss, train_acc,
+
+                                                       valid_loss, valid_acc,
+
+                                                       best_dict['history']['epoch'][-1],
+
+                                                       best_dict['history']['loss']['valid'][-1],
+
+                                                       best_dict['history']['acc']['valid'][-1],
+
+                                                       Decimal(optimizer.param_groups[0]['lr']),
+
+                                                       momentum),
+
+                                               refresh=True)
+
+            else:
+
+                epoch_iterator.set_postfix_str("current_epoch={}, "
+
+                                               "train(loss={:.4f}, acc={:.3f}), "
+
+                                               "valid(loss={:.4f}, acc={:.3f}), "
+
+                                               "best_valid(epoch={}, loss={:.4f}, acc={:.3f}), "
+
+                                               "lr={:.4e}, momentum={:.4f}"
+
+                                               .format(0,
+
+                                                       train_loss, train_acc,
+
+                                                       valid_loss, valid_acc,
+
+                                                       -1,
+
+                                                       np.inf,
+
+                                                       0.,
+
+                                                       Decimal(optimizer.param_groups[0]['lr']),
+
+                                                       momentum),
+
+                                               refresh=True)
+
+        if update_train:
+
+            train_iterator.set_postfix_str("loss={}, acc={}".format(loss.item(), corrects / inputs.size(0)), refresh=True)
+
+        if update_valid:
+
+            valid_iterator.set_postfix_str("loss={}, acc={}".format(loss.item(), corrects / inputs.size(0)), refresh=True)
+
+    
+
+    tracking_dict = {'history': history,
+
+                     'model_dict': model.state_dict(),
+
+                     'optimizer_dict': optimizer.state_dict(),
+
+                     'lr_dict': lr_schedule.state_dict() if lr_schedule else None,
+
+                     'note': checkpoint_note}
+
+    
+
+    best_dict = deepcopy(tracking_dict)
+
+    
+
+    if n_epochs < 1:
+
+        return history, best_dict
+
+    
+
+    model.to(device)
+
+    
+
+    plot_on = False
+
+    
+
+    if lr_schedule:
+
+        last_epoch = int(lr_schedule.last_epoch)
+
+    
+
+    try:
+
+        epoch_iterator = tqdm(iterable=range(i_epoch, i_epoch + n_epochs), desc="Train Epochs")
+
+        for epoch in epoch_iterator:
+
+            if lr_schedule:
+
+                last_epoch += 1
+
+            
+
+            update_progress_stats(True, False, False)
+
+            
+
+            model.train()
+
+            running_loss = 0
+
+            n_corrects = 0
+
+            n_instances = 0
+
+            train_iterator = tqdm(iterable=train_loader, desc="Train Iterations", leave=False)
+
+            for i, (inputs, labels) in enumerate(train_iterator):
+
+                if lr_schedule:
+
+                    lr_schedule.step(last_epoch + (i / len(train_loader)))
+
+                
+
+                inputs = inputs.to(device)
+
+                labels = labels.to(device)
+
+​
+
+                optimizer.zero_grad()
+
+                
+
+                outputs = model(inputs)
+
+                loss = criterion(outputs, labels)
+
+                loss.backward()
+
+                optimizer.step()
+
+​
+
+                running_loss += (loss * inputs.size(0)).item()
+
+                corrects = outputs.argmax(dim=1).eq(labels).sum().item()
+
+                n_corrects += corrects
+
+                n_instances += inputs.size(0)
+
+                
+
+                update_progress_stats(True, True, False)
+
+                
+
+            if lr_schedule:
+
+                lr_schedule.last_epoch = last_epoch
+
+            train_loss = running_loss / n_instances
+
+            train_acc = n_corrects / n_instances
+
+            
+
+            update_progress_stats(True, False, False)
+
+​
+
+            model.eval()
+
+            running_loss = 0
+
+            n_corrects = 0
+
+            n_instances = 0
+
+            valid_iterator = tqdm(iterable=valid_loader, desc="Valid Iterations", leave=False)
+
+            with torch.no_grad():
+
+                for inputs, labels in valid_iterator:
+
+                    inputs = inputs.to(device)
+
+                    labels = labels.to(device)
+
+​
+
+                    outputs = model(inputs)
+
+                    loss = criterion(outputs, labels)
+
+                    running_loss += (loss * inputs.size(0)).item()
+
+                    corrects = outputs.argmax(dim=1).eq(labels).sum().item()
+
+                    n_corrects += corrects
+
+                    n_instances += inputs.size(0)
+
+                    update_progress_stats(True, False, True)
+
+            valid_loss = running_loss / n_instances
+
+            valid_acc = n_corrects / n_instances
+
+            
+
+            update_progress_stats(True, False, False)
+
+            
+
+            history['epoch'].append(epoch)
+
+            history['loss']['train'].append(train_loss)
+
+            history['acc']['train'].append(train_acc)
+
+            history['loss']['valid'].append(valid_loss)
+
+            history['acc']['valid'].append(valid_acc)
+
+            if history['loss']['valid'][-1] < best_valid_loss:
+
+                best_valid_loss = history['loss']['valid'][-1]
+
+                tracking_dict = {'history': history,
+
+                     'model_dict': model.state_dict(),
+
+                     'optimizer_dict': optimizer.state_dict(),
+
+                     'lr_dict': lr_schedule.state_dict() if lr_schedule else None,
+
+                     'note': checkpoint_note}
+
+                best_dict = deepcopy(tracking_dict)
+
+                if checkpoint_file_path:
+
+                    torch.save(best_dict, checkpoint_file_path)
+
+​
+
+            if epoch >= 1:
+
+                if not plot_on:
+
+                    %matplotlib notebook
+
+                    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(13, 24), facecolor=fig_bg_color)
+
+                    axes[0].set_facecolor(plot_bg_color)
+
+                    axes[0].grid(True)
+
+                    axes[0].set_title("Training/Validation Loss", fontsize=fontsize)
+
+                    axes[0].set_xlabel("Epoch", fontsize=fontsize)
+
+                    axes[0].set_ylabel("Loss", fontsize=fontsize)
+
+                    axes[0].plot([], [], color='blue', label='train loss')
+
+                    axes[0].plot([], [], color='orange', label='valid loss')
+
+                    axes[0].legend()
+
+                    axes[1].set_facecolor(plot_bg_color)
+
+                    axes[1].grid(True)
+
+                    axes[1].set_title("Training/Validation Accuracy", fontsize=fontsize)
+
+                    axes[1].set_xlabel("Epoch", fontsize=fontsize)
+
+                    axes[1].set_ylabel("Accuracy", fontsize=fontsize)
+
+                    axes[1].plot([], [], color='blue', label='train acc')
+
+                    axes[1].plot([], [], color='orange', label='valid acc')
+
+                    axes[1].legend()
+
+                    fig.canvas.draw()
+
+                    plot_on = True
+
+                    
+
+                axes[0].lines[0].set_xdata(history['epoch'])
+
+                axes[0].lines[0].set_ydata(history['loss']['train'])
+
+                axes[0].lines[1].set_xdata(history['epoch'])
+
+                axes[0].lines[1].set_ydata(history['loss']['valid'])
+
+                axes[1].lines[0].set_xdata(history['epoch'])
+
+                axes[1].lines[0].set_ydata(history['acc']['train'])
+
+                axes[1].lines[1].set_xdata(history['epoch'])
+
+                axes[1].lines[1].set_ydata(history['acc']['valid'])
+
+​
+
+                axes[0].set_xlim(-0.05 * epoch, 1.05 * epoch)
+
+                max_min_diff = (max(history['loss']['train'] + history['loss']['valid'])
+
+                                - min(history['loss']['train'] + history['loss']['valid']))
+
+                if max_min_diff > 0:
+
+                    axes[0].set_ylim(min(history['loss']['train'] + history['loss']['valid']) - 0.05 * max_min_diff,
+
+                                max(history['loss']['train'] + history['loss']['valid']) + 0.05 * max_min_diff)
+
+                axes[1].set_xlim(-0.05 * epoch, 1.05 * epoch)
+
+                max_min_diff = (max(history['acc']['train'] + history['acc']['valid'])
+
+                                - min(history['acc']['train'] + history['acc']['valid']))
+
+                if max_min_diff > 0:
+
+                    axes[1].set_ylim(min(history['acc']['train'] + history['acc']['valid']) - 0.05 * max_min_diff,
+
+                                max(history['acc']['train'] + history['acc']['valid']) + 0.05 * max_min_diff)
+
+​
+
+                axes[0].xaxis.set_major_locator(AutoLocator())
+
+                axes[0].yaxis.set_major_locator(AutoLocator())
+
+                axes[1].xaxis.set_major_locator(AutoLocator())
+
+                axes[1].yaxis.set_major_locator(AutoLocator())
+
+​
+
+                xlim = axes[0].get_xlim()
+
+                xticks = [tick for tick in axes[0].get_xticks() if xlim[0] <= tick <= xlim[1]]
+
+                if history['loss']['train'].index(max(history['loss']['train'])) not in xticks:
+
+                    xticks.append(history['loss']['train'].index(max(history['loss']['train'])))
+
+                if history['loss']['train'].index(min(history['loss']['train'])) not in xticks:
+
+                    xticks.append(history['loss']['train'].index(min(history['loss']['train'])))
+
+                if history['loss']['valid'].index(max(history['loss']['valid'])) not in xticks:
+
+                    xticks.append(history['loss']['valid'].index(max(history['loss']['valid'])))
+
+                if history['loss']['valid'].index(best_valid_loss) not in xticks:
+
+                    xticks.append(history['loss']['valid'].index(best_valid_loss))
+
+                if epoch not in xticks:
+
+                    xticks.append(epoch)
+
+                axes[0].set_xticks(xticks)
+
+​
+
+                xlim = axes[1].get_xlim()
+
+                xticks = [tick for tick in axes[1].get_xticks() if xlim[0] <= tick <= xlim[1]]
+
+                if history['acc']['train'].index(max(history['acc']['train'])) not in xticks:
+
+                    xticks.append(history['acc']['tra...
+
+This snippet was truncated for display: see it in full.
+Jonathan Hasan 1 day ago
+@Tyler Yang holy moly.....
+Tyler Yang 1 day ago
+The important part is the usage of %matplotlib notebook, updating the existing line object using ax.lines[i].set_xdata() and ax.lines[i].set_ydata(), and replotting with fig.canvas.draw()...
+Michael 1 day ago
+@Tyler Yang eh let me dissect this..... ill get back to you next week :smile:
+Jonathan Hasan 1 day ago
+Is the one cycle policy integrated im this as well?
+Tyler Yang 1 day ago
+@Jonathan Hasan Yeah, I poured quite a bit of effort making the training process look pretty :sweat_smile:My effort was inversely proportional to the readability of the code.
+Jonathan Hasan 1 day ago
+Was debugging as bad as i imagine it to be?
+Michael 1 day ago
+Na he had his network do it for him
+Tyler Yang 1 day ago
+@Jonathan Hasan No, I created my own implementation as a _LR_Scheduler class.
+
+class One_Cycle_Policy_LR(lr_scheduler._LRScheduler):
+
+    """Starting with the optimizer's default learning rate, during a single cycle with the given cycle length, linearly
+
+    increases the learning rate to the maximum learning rate specified, then decreases it back to the initial value.
+
+    After the cycle is finished, the learning rate will continue decreasing linearly, decay exponentially, or remain
+
+    constant depending on the mode specified. (The original implementation decreases the learning rate linearly to
+
+    the annihilation)
+
+    
+
+    Optionally, also controls the momentum value; decreasing and increasing it during the cycle.
+
+    
+
+    Args:
+
+        optimizer (Optimizer): Wrapped optimizer.
+
+        max_lr (int or float): Maximum learning rate.
+
+        cycle_length (int or float): Number of epochs for the cycle. The value
+
+            can be a float as well.
+
+        total_epochs (int or float): Total number of epochs during the training.
+
+            Used only if `lr_mode_after_cycle` is set to `linear`. Can be a float.
+
+            Otherwise, the value is ignored. Should be greater than `cycle_length`,
+
+            though not strictly prohibited. Default: 0.
+
+        gamma (int or float): Multiplicative factor of learning rate decay. Used only if
+
+            `lr_mode_after_cycle` is set to `exponential`. Ignored for other modes.
+
+            Default: 0.98.
+
+        const_lr (int or float): Constant learning rate value. Used only if `lr_mode_after_cycle`
+
+            is set to 'constant'. Ignored for other modes. Default: 1e-03.
+
+        min_lr (int or float): Minimum learning rate after the cycle. Default: 0.
+
+        lr_mode_after_cycle (str): One of `linear`, `exponential`, `constant`.
+
+            In `linear` mode, the learning rate will continue to decrease linearly
+
+            towards 0 after the cycle is finished until `total_epochs` specified, and it
+
+            will be 0 after it reaches `total_epochs`. In `exponential` mode, the learning
+
+            rate will start decreasing exponentially every epoch after the cycle with decay
+
+            factor `gamma`. In `constant` mode, the learning rate will be set to `const_lr`
+
+            after the cycle and will remain constant. Default: ``linear``.
+
+        min_momentum (int or float): Minimum momentum value within the range [0, 1]. Used only if
+
+            `cyclic_momentum` is ``True``. Default: 0.85.
+
+        cyclic_momentum (bool): Whether to vary the momentum value during the cycle. If
+
+            ``True``, the optimizer must have ``momentum`` parameter (or ``betas`` for Adam)
+
+            and the momentum value will linearly decrease to `min_momentum` and increase back
+
+            to the original value during the cycle. Default: ``False``.
+
+        last_epoch (int or float): The index of last epoch. Can be a float depending on your
+
+            purpose. Default: -1.
+
+    """
+
+    def __init__(self, optimizer, max_lr, cycle_length, total_epochs=0, gamma=0.8, const_lr=3e-3, min_lr=0.,
+
+                 lr_mode_after_cycle="linear", min_momentum=0.85, cyclic_momentum=False, last_epoch=-1):
+
+        if not isinstance(optimizer, optim.Optimizer):
+
+            raise TypeError('{} is not an Optimizer'.format(
+
+                type(optimizer).__name__))
+
+        self.optimizer = optimizer
+
+        
+
+        if not isinstance(max_lr, (int, float)):
+
+            raise TypeError('expected an int or float for `max_lr`, but {} was given'.format(type(max_lr)))
+
+        if max_lr < 0:
+
+            raise ValueError('expected a non-negative value for `max_lr`, but {} was given'.format(max_lr))
+
+        self.max_lr = float(max_lr)
+
+        
+
+        if not isinstance(min_lr, (int, float)):
+
+            raise TypeError('expected an int or float for `min_lr`, but {} was given'.format(type(min_lr)))
+
+        if min_lr < 0:
+
+            raise ValueError('expected a non-negative value for `min_lr`, but {} was given'.format(min_lr))
+
+        self.min_lr = float(min_lr)
+
+        
+
+        if not isinstance(cycle_length, (int, float)):
+
+            raise TypeError('expected an int or float for `cycle_length`, but {} was given'.format(type(cycle_length)))
+
+        if cycle_length < 0:
+
+            raise ValueError('`cycle_length` must be non-negative')
+
+        self.cycle_length = cycle_length
+
+        
+
+        if cyclic_momentum:
+
+            if not isinstance(min_momentum, (int, float)):
+
+                raise TypeError('expected an int or float for `min_momentum`, but {} was given'.format(type(min_momentum)))
+
+            if not 0 <= min_momentum <= 1:
+
+                raise ValueError('expected a value within the range [0, 1] for `min_momentum`, but {} was given'.format(min_momentum))
+
+            self.cyclic_momentum = True
+
+            self.min_momentum = float(min_momentum)
+
+        else:
+
+            self.cyclic_momentum = False
+
+            self.min_momentum = None
+
+        
+
+        if not isinstance(lr_mode_after_cycle, str):
+
+            raise TypeError('expected a str for `lr_mode_after_cycle`, but {} was given'.format(type(lr_mode_after_cycle)))
+
+        self.lr_mode_after_cycle = lr_mode_after_cycle.lower()
+
+        if self.lr_mode_after_cycle == 'linear':
+
+            if not isinstance(total_epochs, (int, float)):
+
+                raise TypeError('expected an int or float for `total_epochs`, but {} was given'.format(type(total_epochs)))
+
+            self.total_epochs = total_epochs
+
+            self.gamma = gamma
+
+            self.const_lr = const_lr
+
+        elif self.lr_mode_after_cycle == 'exponential':
+
+            if not isinstance(gamma, (int, float)):
+
+                raise TypeError('expected a float for `gamma`, but {} was given'.format(type(gamma)))
+
+            if not 0 <= gamma <= 1:
+
+                raise ValueError('expected a value within the range [0, 1] for `gamma`, but {} was given'.format(gamma))
+
+            self.total_epochs = total_epochs
+
+            self.gamma = float(gamma)
+
+            self.const_lr = const_lr
+
+        elif self.lr_mode_after_cycle == 'constant':
+
+            if not isinstance(const_lr, (int, float)):
+
+                raise TypeError('expected a float for `const_lr`, but {} was given'.format(type(const_lr)))
+
+            if const_lr < 0:
+
+                raise ValueError('expected a non-negative value for `const_lr`, but {} was given'.format(const_lr))
+
+            self.total_epochs = total_epochs
+
+            self.gamma = gamma
+
+            self.const_lr = float(const_lr)
+
+        else:
+
+            raise ValueError('expected one of (`linear`, `exponential`, `constant`), but `{}` was given'.format(self.lr_mode_after_cycle))
+
+        
+
+        if last_epoch == -1:
+
+            for i, group in enumerate(optimizer.param_groups):
+
+                if cyclic_momentum:
+
+                    if 'momentum' not in group:
+
+                        if 'betas' not in group:
+
+                            raise KeyError("param 'momentum' or 'betas' is not present "
+
+                                           "in param_groups[{}] of the given optimizer {}".format(i, type(optimizer).__name__))
+
+                        elif self.min_momentum > group['betas'][0]:
+
+                            raise ValueError("first beta value in `betas` of param_groups[{}] of the given optimizer {} "
+
+                                             "is below `min_momentum` given".format(i, type(optimizer).__name__))
+
+                        else:
+
+                            group.setdefault('initial_momentum', group['betas'][0])
+
+                    elif self.min_momentum > group['momentum']:
+
+                        raise ValueError("`momentum` value in param_groups[{}] of the given optimizer {} "
+
+                                         "is below `min_momentum` given".format(i, type(optimizer).__name__))
+
+                    else:
+
+                        group.setdefault('initial_momentum', group['momentum'])
+
+                if self.max_lr < group['lr']:
+
+                    raise ValueError("`lr` value in param_groups[{}] of the given optimizer {} "
+
+                                     "exceeds `max_lr` given".format(i, type(optimizer).__name__))
+
+                else:
+
+                    group.setdefault('initial_lr', group['lr'])
+
+        else:
+
+            for i, group in enumerate(optimizer.param_groups):
+
+                if 'initial_lr' not in group:
+
+                    raise KeyError("param 'initial_lr' is not specified "
+
+                                   "in param_groups[{}] when resuming an optimizer".format(i))
+
+                if self.max_lr < group['initial_lr']:
+
+                    raise ValueError("`initial_lr` value in param_groups[{}] of the given optimizer {} "
+
+                                     "exceeds `max_lr` given".format(i, type(optimizer).__name__))
+
+                if cyclic_momentum:
+
+                    if 'initial_momentum' not in group:
+
+                        raise KeyError("param 'initial_momentum' is not specified "
+
+                                       "in param_groups[{}] when resuming an optimizer".format(i))
+
+        self.base_lrs = list(map(lambda group: group['initial_lr'], optimizer.param_groups))
+
+        if cyclic_momentum:
+
+            self.base_momentums = list(map(lambda group: group['initial_momentum'], optimizer.param_groups))
+
+        else:
+
+            self.base_momentums = None
+
+        self.step(last_epoch + 1)
+
+        self.last_epoch = last_epoch
+
+        
+
+    def get_lr(self):
+
+        if self.last_epoch <= 0:
+
+            return self.base_lrs
+
+        elif self.last_epoch <= self.cycle_length:
+
+            return [self.max_lr + (base_lr - self.max_lr)
+
+                    * abs(-2. * (self.last_epoch / self.cycle_length) + 1)
+
+                    for base_lr in self.base_lrs]
+
+        else:
+
+            if self.lr_mode_after_cycle == 'linear':
+
+                if self.last_epoch < self.total_epochs:
+
+                    return [max(base_lr *
+
+                                (1 - (self.last_epoch - self.cycle_length)
+
+                                 / (self.total_epochs - self.cycle_length)), self.min_lr)
+
+                            for base_lr in self.base_lrs]
+
+                else:
+
+                    return [self.min_lr for base_lr in self.base_lrs]
+
+            elif self.lr_mode_after_cycle == 'exponential':
+
+                return [max(base_lr * self.gamma ** (self.last_epoch - self.cycle_length), self.min_lr)
+
+                        for base_lr in self.base_lrs]
+
+            else:
+
+                return [max(self.const_lr, self.min_lr) for base_lr in self.base_lrs]
+
+        
+
+    def get_momentum(self):
+
+        if self.cyclic_momentum:
+
+            if 0 <= self.last_epoch < self.cycle_length:
+
+                return [self.min_momentum + (base_momentum - self.min_momentum)
+
+                        * abs(-2. * (self.last_epoch / self.cycle_length) + 1)
+
+                        for base_momentum in self.base_momentums]
+
+            else:
+
+                return self.base_momentums
+
+        else:
+
+            return None
+
+        
+
+​
+
+    def step(self, epoch=None):
+
+        if epoch is None:
+
+            epoch = self.last_epoch + 1
+
+        self.last_epoch = epoch
+
+        
+
+        for param_group, lr in zip(self.optimizer.param_groups, self.get_lr()):
+
+            param_group['lr'] = lr
+
+            
+
+        if self.cyclic_momentum:
+
+            for param_group, momentum in zip(self.optimizer.param_groups, self.get_momentum()):
+
+                if 'momentum' in param_group:
+
+                    param_group['momentum'] = momentum
+
+                else:
+
+                    param_group['betas'] = (momentum, param_group['betas'][1])
+
+Michael 1 day ago
+Ok now this stuff is cool..... Im a have to implement this and see what I get
+Jonathan Hasan 1 day ago
+Jesus, where did you learn to code this well...this is superb
+Tyler Yang 1 day ago
+@Jonathan Hasan The debugging wasn't that bad (miraculously)! I think it's because many of the lines here were quite repetitive, and I already tried using dynamic plotting somewhere else inside the notebook, so the plotting part was fine in most part.
+Tyler Yang 1 day ago
+@Jonathan Hasan Lots of googling & stack overflow + Reading the original source codes + Lots of trials and errors :wink: (edited)
+Jonathan Hasan 1 day ago
+I have a lot to learn.... thanks for sharing your results with us!
+Michael 1 day ago
+It is interesting though how that last 0.6% accuracy takes orders of magnitude more time and processing to get .... achieved 98.7% in a little under 8min densenet121
+Jonathan Hasan 1 day ago
+@Michael I am hearing alot about densenet recently. Do you think that it performs better than resnet?
+Michael 1 day ago
+@Jonathan Hasan my comparison of different architectures i have ran... densenet121 being my favorite so far.... about to give resnet another shot with my newly acquired knowledge.
+https://pytorchfbchallenge.slack.com/files/UDZF77PA4/FF7A1RM6W/To_nn_Dropout_0_35__or_not_to_nn_Dropout_0_35__that_is_the_question_.txt (edited)
+Tyler Yang 1 day ago
+@Michael What's more interesting is that this deceleration of improvement resembles what's known as the learning curve, which is a term that applies not only to machine learning, but also to human learning as well!
+Michael 1 day ago
+@Tyler Yang Woah..... that's deep man, didn't even think of that but how true it is.....machines are scary humans without the flesh
+Tyler Yang 1 day ago
+@Michael By the way, here's the log scale plot of the losses & accuracy you were wondering :slightly_smiling_face:
+Michael 1 day ago
+that slight loss around epoch 40 is interesting..... if only we could see what the machine was thinking then and how it corrected its self
+Michael 1 day ago
+Much easier to read graph though
+Jonathan Hasan 1 day ago
+@Tyler Yang Cool graph! I imagine it would be useful as a diagnostic tool
+Tyler Yang 1 day ago
+@Michael that slight loss around epoch 40 is interesting..... if only we could see what the machine was thinking then and how it corrected its self
+Oh, that's probably due to the 1Cycle Policy I implemented; the lr was around the maximum value I set near that point, which made the loss a bit unstable. I read that this is actually good because it allows the model to explore the loss function landscape and find a possibly better optima. (edited)
+Michael 1 day ago
+@Tyler Yang in your magical graph generator do you happen to have plot of learning rates and accuracy vs epoch*? As that makes alot of sense for it to get a little crazy to get out of the rut and explore new options.
+If you don't make it into the top 300 I will be surprised, your knowledge and communication is some of the best i've seen so far on slack (edited)
+Tyler Yang 1 day ago
+@Michael in your magical graph generator do you happen to have plot of learning rates vs accuracy?
+Well, I think I have something similar to what you want. I implemented a learning rate finder function that helps me find the appropriate range of learning rate values for training.
+@Michael If you don't make it into the top 300 I will be surprised, your knowledge and communication is some of the best i've seen so far on slack
+Thank you! :blush: That's very nice of you. I, as well, wish to get the scholarship! (edited)
+Michael 1 day ago
+That is what I asked for but not what I wanted (full on manager right there haha) I meant one vs epochs...... but that graph has my curiosity as how did you make it? you would need to train a whole new model for each learning rate data point?!?!?!
+Jonathan Hasan 1 day ago
+@Tyler Yang So that lowest point on the LR Finder is the best learning rate for your model?
+Tyler Yang 1 day ago
+@Jonathan Hasan So that lowest point on the LR Finder is the best learning rate for your model?
+Usually, you would use the value before the lowest point, where the loss is still decreasing.
+For my case, I set my maximum lr to the point very close to the lowest point so that it would cause the loss to be a bit unstable, but not unstable enough to make it diverge.
+Jonathan Hasan 1 day ago
+@Tyler Yang so 10^-4 would be a good starting point
+Michael 1 day ago
+@Jonathan Hasan Jonathan Hasan which just to happens to be the default for optim.Adam
+Tyler Yang 1 day ago
+@Michael you would need to train a whole new model for each learning rate data point?!?!?!
+Actually, it's a lot less time consuming than that; you just start with a low learning rate, and slightly increase it either linearly or exponentially every step (not every epoch). It stops when the learning rate reaches the maximum value that was manually set, or the loss diverges.
+
+def lr_find(model, optimizer, criterion, train_loader, valid_loader=None, device='cpu', end_lr=10, num_iters=100,
+
+            step_mode="exp", smoothing_factor=0.1, divergence_threshold=5, threshold_mode="rel", live_plot=False):
+
+    """Performs the learning rate range test.
+
+    
+
+    Arguments:
+
+        train_loader (torch.utils.data.DataLoader): the training set data laoder.
+
+        valid_loader (torch.utils.data.DataLoader, optional): if `None` the range test
+
+            will only use the training loss. When given a data loader, the model is
+
+            evaluated after each iteration on that dataset and the evaluation loss
+
+            is used. Note that in this mode the test takes significantly longer but
+
+            generally produces more precise results. Default: None.
+
+        end_lr (float, optional): the maximum learning rate to test. Default: 10.
+
+        num_iters (int, optional): the number of iterations over which the test
+
+            occurs. Default: 100.
+
+        step_mode (str, optional): one of the available learning rate policies,
+
+            linear or exponential ("linear", "exp"). Default: "exp".
+
+        smoothing_factor (float, optional): the loss smoothing factor within the [0, 1[
+
+            interval. Disabled if set to 0, otherwise the loss is smoothed using
+
+            exponential smoothing. Default: 0.05.
+
+        divergence_threshold (int, optional): the test is stopped when the loss surpasses the
+
+            threshold:  diverge_th * best_loss. Default: 5.
+
+        threshold_mode (str, optional): one of ("rel", "abs").
+
+            If "rel", the threshold will be the best_loss * `divergence_threshold`.
+
+            If "abs", the threshold will be the best_loss + `divergence_threshold`. Default: "rel"
+
+        live_plot (bool, optional): whether to display a dynamic plot that shows the progress
+
+            in real time. If `valid_loader` is given, both losses are plotted. Default: True.
+
+    """
+
+    history = {"lr": [], "loss": []}
+
+    
+
+    if not isinstance(num_iters, int):
+
+        raise TypeError("expected int value for num_iter, but got {}".format(type(num_iters)))
+
+    if num_iters < 1:
+
+        return history
+
+    
+
+    if not isinstance(threshold_mode, str):
+
+        raise TypeError('expected str value for threshold_mode, but got {}'.format(type(threshold_mode)))
+
+    if threshold_mode.lower() not in ("abs", "rel"):
+
+        raise ValueError('expected one of (rel, abs), got {}'.format(threshold_mode))
+
+    threshold_mode = threshold_mode.lower()
+
+    
+
+    if not isinstance(step_mode, str):
+
+        raise TypeError('expected str value for step_mode, but got {}'.format(type(step_mode)))
+
+        
+
+    if smoothing_factor < 0 or smoothing_factor > 1:
+
+        raise ValueError("smoothing_factor is outside the range [0, 1]")
+
+        
+
+    if step_mode.lower() in ("exp", "exponential"):
+
+        ratio = end_lr / optimizer.param_groups[0]['lr']
+
+        gamma = ratio ** (1 / max(num_iters - 1, 1))
+
+        lr_schedule = lr_scheduler.ExponentialLR(optimizer, gamma)
+
+    elif step_mode.lower() in ("lin", "linear"):
+
+        step_size = (end_lr - optimizer.param_groups[0]['lr']) / max(num_iters - 1, 1)
+
+        lr_schedule = lr_scheduler.LambdaLR(optimizer, (lambda epoch: 1 + (step_size * epoch)))
+
+    else:
+
+        raise ValueError("expected one of (exp, linear), got {}".format(step_mode))
+
+    
+
+    init_model_state = deepcopy(model.state_dict())
+
+    init_optimizer_state = deepcopy(optimizer.state_dict())
+
+    
+
+    lr_schedule.step(0)
+
+    lr = lr_schedule.get_lr()[0]
+
+    loss = np.inf
+
+    stat_format = "Learning Rate = {:.2e}, Loss = {:.4f}"
+
+#     stat_tracker = {"Learning Rate": lr_schedule.get_lr()[0], "Loss": np.inf}
+
+    
+
+    model.train()
+
+    iterator = tqdm(iterable=range(num_iters), desc="Iterating ...", unit="epoch")
+
+    iterator.set_postfix_str(stat_format.format(Decimal(lr), loss), refresh=True)
+
+    try:
+
+        if live_plot:
+
+            %matplotlib notebook
+
+            fig, ax = plt.subplots(figsize=(13, 6), facecolor=fig_bg_color)
+
+            ax.set_facecolor(plot_bg_color)
+
+            ax.grid(True)
+
+            if step_mode.lower() in ("exp", "exponential"):
+
+                ax.set_xscale("log")
+
+            else:
+
+                ax.set_xscale("linear")
+
+            ax.set_title("LR Finder", fontsize=fontsize)
+
+            ax.set_xlabel("Learning rate", fontsize=fontsize)
+
+            ax.set_ylabel("Loss", fontsize=fontsize)
+
+            if valid_loader:
+
+                train_losses = []
+
+            
+
+        for iteration in iterator:
+
+            inputs, labels = next(iter(train_loader))
+
+            inputs, labels = inputs.to(device), labels.to(device)
+
+​
+
+            lr_schedule.step(iteration)
+
+​
+
+            optimizer.zero_grad()
+
+            
+
+            loss = criterion(model(inputs), labels)
+
+            loss.backward()
+
+            optimizer.step()
+
+​
+
+            if valid_loader:
+
+                if live_plot:
+
+                    if iteration == 0:
+
+                        train_losses.append(loss.item())
+
+                    else:
+
+                        train_losses.append(smoothing_factor * loss.item() + (1 - smoothing_factor) * train_losses[-1])
+
+                if iteration != 0:
+
+                    valid_iterator.leave = False
+
+                    valid_iterator.close()
+
+                valid_iterator = tqdm(iterable=valid_loader, desc="Validation Iterations", unit="epoch")
+
+                
+
+                model.eval()
+
+                loss = 0
+
+                total_instances = 0
+
+                with torch.no_grad():
+
+                    for inputs, labels in valid_iterator:
+
+                        inputs, labels = inputs.to(device), labels.to(device)
+
+                        loss += criterion(model(inputs), labels).item() * inputs.size(0)
+
+                        total_instances += inputs.size(0)
+
+                        iterator.refresh()
+
+                loss /= total_instances
+
+                model.train()
+
+            else:
+
+                loss = loss.item()
+
+​
+
+            history['lr'].append(lr_schedule.get_lr()[0])
+
+            lr = history['lr'][-1]
+
+​
+
+            if iteration == 0:
+
+                best_loss = loss
+
+            else:
+
+                if smoothing_factor > 0:
+
+                    loss = smoothing_factor * loss + (1 - smoothing_factor) * history["loss"][-1]
+
+                if loss < best_loss:
+
+                    best_loss = loss
+
+​
+
+            history["loss"].append(loss)
+
+​
+
+            iterator.set_postfix_str(stat_format.format(Decimal(lr), loss), refresh=False)
+
+            
+
+            if live_plot:
+
+                if iteration == 1:
+
+                    if valid_loader:
+
+                        ax.plot(history['lr'], train_losses, color='blue', label='train')
+
+                        ax.plot(history['lr'], history['loss'], color='orange', label='valid')
+
+                        ax.legend()
+
+                    else:
+
+                        ax.plot(history['lr'], history['loss'], color='blue')
+
+                    fig.canvas.draw()
+
+                elif iteration > 1:
+
+                    if valid_loader:
+
+                        ax.lines[0].set_xdata(history['lr'])
+
+                        ax.lines[0].set_ydata(train_losses)
+
+                        ax.lines[1].set_xdata(history['lr'])
+
+                        ax.lines[1].set_ydata(history['loss'])
+
+                    else:
+
+                        ax.lines[0].set_xdata(history['lr'])
+
+                        ax.lines[0].set_ydata(history['loss'])
+
+                    ax.relim()
+
+                    ax.autoscale_view()
+
+                    fig.canvas.draw()
+
+​
+
+            if threshold_mode == "rel" and loss > divergence_threshold * best_loss:
+
+                print("Stopping early, the loss has diverged.")
+
+                break
+
+            elif loss > divergence_threshold + best_loss:
+
+                print("Stopping early, the loss has diverged.")
+
+                break
+
+                
+
+    except KeyboardInterrupt:
+
+        pass
+
+        
+
+    %matplotlib inline
+
+    model.load_state_dict(init_model_state)
+
+    optimizer.load_state_dict(init_optimizer_state)
+
+    return history
+
+    
+
+Jonathan Hasan 1 day ago
+well @Tyler Yang as @Michael said, if you don't get accepted to this phase 2 I will be shocked. You as well @Michael,Both of you guys are going full circles around me. (edited)
+Michael 1 day ago
+I'm so far behind this @Tyler Yang kid haha, but thank you @Jonathan Hasan for the kind words. Its been an amazing experience to even make it this part, really showed me the importance of community in such a challenging new field
+Tyler Yang 1 day ago
+@Jonathan Hasan so 10^-4 would be a good starting point
+Yeah, for this case, 10^-4 would be a good initial learning rate. This value will be different every time you adjust your hyperparameters such as the overall architecture (including whether some layers are frozen or not), the type of optimizer, weight decay, dropout, and so on.When training only the classifier layer, this value was actually a lot higher than the one shown above; about 0.1
+Jonathan Hasan 1 day ago
+@Michael I wish I followed your example. I keep asking questions that could probably be found by going to google or searching the forum. But no matter, I will keep on working towards the goal as best as i can. (edited)
+Michael 1 day ago
+@Tyler Yang  is it then possible that the previous batch from the lower learning rates would impact the next batch at higher LR rates? be interesting to see what happens if you reset the model at each lr magnitude. (edited)
+Eee 1 day ago
+@Tyler Yang it would be nice if you write an article somewhere with all your findings
+Tyler Yang 1 day ago
+@Michael is it then possible that the previous batch from the lower learning rates would impact the next batch at higher LR rates?
+Well, since the learning rate is updated every batch rather than epoch, the training loss tends to be stochastic (As you can see from the blue line in the plot above), so I think the loss at the next batch depends on not only to the learning rate, but also to the previous loss and the batch.
+@Michael be interesting to see what happens if you reset the model at each lr magnitude.
+I'm guessing it would be harder to find the optimal learning rate because the gradients are usually large at the beginning -- since the model performs poorly and the loss is high -- and a high learning rate is more likely to cause the loss to diverge in that case...
+It is said that warming up with a lower learning rate helps when trying to use a higher learning rate. (edited)
+Tyler Yang 1 day ago
+@Eee it would be nice if you write an article somewhere with all your findings
+I'm actually considering creating a blog as a place to write journals about my learning journey and as a portfolio for the future...
+Michael 1 day ago
+I'd read that blog!
+Interesting about the warming up part.....which would make a Cycle Policy even more valuable as you could start low, go high move fast, then back low find the valley, go high cause it to jump the local peak, then back low find the new valley....... Ok you've convinced me, I've got to implement this :smile:
+Jonathan Hasan 1 day ago
+@Michael Can you let me know how it goes? I am still trying manual adjustment but if I don't see any improvements, cyclicalLR might need to be my new scheduler (edited)
+Jonathan Hasan 1 day ago
+@Michael @Tyler Yang I remembered that both of you said that adam was used for both of your models. Did it perform better for you both than SGD?
+Michael 1 day ago
+@Jonathan Hasan It preformed quicker then SGD, but the wrong paramaters can make it inaccurate. It also has more settings to work with. SGD + momentum is pretty much guaranteed to eventually get you to the solution, Adam with the right parameters gets you there faster
+Jonathan Hasan 1 day ago
+@Michael I have been reading articles where it says adam converges faster and is resistant to bad hyperparameters. SGD is very picky when it comes to hyperparams but gets lower minima. Yet, SGD doesn't seem to be working for me, i haven't been using momentum but now might be a good time to do so.
+Tyler Yang 1 day ago
+@Jonathan Hasan I remembered that both of you said that adam was used for both of your models. Did it perform better for you both than SGD?
+I managed to get about 98.6% valid accuracy using Inception v3 and SGD with momentum. But, I think Adam can give you a better result faster and in a more stable way. According to what I remember, Adam is likely to outperform SGD, but usually needs more regularization to avoid overfitting. (edited)
+Michael 1 day ago
+@Tyler Yang have you tried Adam with  amsgrad=True? found it to be the fastest to converge
+Tyler Yang 1 day ago
+@Michael have you tried Adam with  amsgrad=True? found it to be the fastest to converge
+No, I haven't. I actually don't really know/understance what amsgrad does... I will consider it next time I train a model. I'll probably look into what it does and the purpose before than.
+Michael 1 day ago
+the paper https://openreview.net/forum?id=ryQu7f-RZ explains it decently
+openreview.net
+On the Convergence of Adam and Beyond
+Several recently proposed stochastic optimization methods that have been successfully used in training deep networks such as RMSProp, Adam, Adadelta, Nadam are based on using gradient updates...
+Michael 1 day ago
+I also love how we have this mega thread channel of information..... its a gold mine right here.
+Jonathan Hasan 1 day ago
+Yeah, it is a bummer. I get to talk with people who really understand the craft here. I have learned a lot from you guys. It would be a shame to see this go.
+Michael 1 day ago
+Well we will all just have to recreate it in phase 2 :smile:
+Jonathan Hasan 1 day ago
+@Tyler Yang Those functions that you shared with us earlier, do you have any sources for those or did you just come up with those functions on your own?
+Jonathan Hasan 1 day ago
+@Michael Also, can I ask you how you tackled learning stuff on the side for this project? Say you wanted to implement cyclicalLR scheduler, you just go on google and research for an hour or so and then try and make it in python?
+Michael 1 day ago
+@Jonathan Hasan Really I just come to this thread and ask @Tyler Yang :smile:...... but serious yes I just get on google and ask it the same queston in many different phrases.... let me snap a pic real quick of all the tabs. Oh and the Torch docs are invaluable https://pytorch.org/docs/stable/optim.html
+Michael 1 day ago
+tabs
+Tyler Yang 1 day ago
+@Jonathan Hasan Those functions that you shared with us earlier, do you have any sources for those or did you just come up with those functions on your own?
+I implemented the 1Cycle Policy myself based on the description as to how it should work.For the lr_find function, it was hugely based on the code here: https://github.com/davidtvs/pytorch-lr-finder
+Though I changed a lot to do dynamic plotting and to make it into a function rather than a separate class.Anything other than lr_find, I pretty much implemented myself, though I did look into how to do dynamic plotting and many other separate parts.. 
